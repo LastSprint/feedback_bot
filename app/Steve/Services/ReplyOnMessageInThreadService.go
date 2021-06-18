@@ -9,6 +9,9 @@ type SlackRepo interface {
 	PostMessageToChat(message, channel, threadId string) error
 }
 
+const devOpsAndSaChannelID = "CFSF56EHK"
+const steveTestChannelId = "C0251ECG4QP"
+
 type ReplyOnMessageInThreadService struct {
 	BotSlackId string
 	MessageToReply string
@@ -45,7 +48,7 @@ func (srv *ReplyOnMessageInThreadService)Reply(event models.SlackEvent){
 		return
 	}
 
-	if event.EventValue.Channel != "C0251ECG4QP" && event.EventValue.Channel != "CFSF56EHK" {
+	if event.EventValue.Channel != steveTestChannelId && event.EventValue.Channel != devOpsAndSaChannelID {
 		log.Printf("[WARN] Got event from channel %s\n", event.EventValue.Channel)
 	}
 
