@@ -50,6 +50,7 @@ func (srv *ReplyOnMessageInThreadService)Reply(event models.SlackEvent){
 
 	if event.EventValue.Channel != steveTestChannelId && event.EventValue.Channel != devOpsAndSaChannelID {
 		log.Printf("[WARN] Got event from channel %s\n", event.EventValue.Channel)
+		return
 	}
 
 
