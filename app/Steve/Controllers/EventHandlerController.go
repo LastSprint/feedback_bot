@@ -8,23 +8,33 @@ import (
 	"net/http"
 )
 
+type ConfusingShortcutService interface {
+	Save(message models.MessageShortcutCallBackModel) error
+}
+
 type ReplyOnMessageService interface {
 	Reply(event models.SlackEvent)
 }
 
+// EventHandlerController handles slack events
 type EventHandlerController struct {
 	ReplyOnMessageService
+	ConfusingShortcutService
 }
 
+// Init add http handlers for:
+//	- `POST /slack_events/steve`
 func (cnt *EventHandlerController) Init() {
-	http.HandleFunc("/slack_event", cnt.handleChannelPush)
+	http.HandleFunc("/slack_events/steve", cnt.handleChannelPush)
+	http.HandleFunc("/commands/ops/wtf", cnt.handleWtfCommand)
 }
 
+// handleChannelPush handles situation when somebody write something to channel (doesn;t matter in thread or not)
 func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 
-	if cnt.handleVerification(w, body) {
+	if cnt.verifyIfNeeded(w, body) {
 		// it's verification request. skip it
 		return
 	}
@@ -48,7 +58,10 @@ func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *h
 	}()
 }
 
-func (cnt *EventHandlerController) handleVerification(w http.ResponseWriter, body []byte) bool {
+// verifyIfNeeded check if request is slack-verification request
+// if it's true then return challenge back to slack (write to ResponseWriter) and returns `true`
+// if it isn't true then just returns `false`
+func (cnt *EventHandlerController) verifyIfNeeded(w http.ResponseWriter, body []byte) bool {
 	type verification_token struct {
 		Token     string
 		Challenge string
@@ -66,4 +79,23 @@ func (cnt *EventHandlerController) handleVerification(w http.ResponseWriter, bod
 	w.Write([]byte(val.Challenge))
 
 	return true
+}
+
+// handleWtfCommand handles `/ops_wtf` shortcut
+func (cnt *EventHandlerController) handleWtfCommand(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Printf("[ERR] WTF command with request %s. Got error while parsing url form %s", r.URL, err.Error())
+		return
+	}
+
+	var payload models.MessageShortcutCallBackModel
+
+	if err := json.Unmarshal([]byte(r.Form.Get("payload")), &payload); err != nil {
+		log.Printf("[ERR] WTF command with request %s. Got error while parsing payload to json %s", r.URL, err.Error())
+		return
+	}
+
+	if err := cnt.ConfusingShortcutService.Save(payload); err != nil {
+		log.Printf("[ERR] WTF command with request %s. Got error from service %s", r.URL, err.Error())
+	}
 }

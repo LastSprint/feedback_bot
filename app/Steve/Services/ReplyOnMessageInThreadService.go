@@ -13,12 +13,12 @@ const devOpsAndSaChannelID = "CFSF56EHK"
 const steveTestChannelId = "C0251ECG4QP"
 
 type ReplyOnMessageInThreadService struct {
-	BotSlackId string
+	BotSlackId     string
 	MessageToReply string
 	SlackRepo
 }
 
-func (srv *ReplyOnMessageInThreadService)Reply(event models.SlackEvent){
+func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
 
 	if event.EventValue.User == srv.BotSlackId {
 		log.Println("[INFO] This is message from this bot")
@@ -52,7 +52,6 @@ func (srv *ReplyOnMessageInThreadService)Reply(event models.SlackEvent){
 		log.Printf("[WARN] Got event from channel %s\n", event.EventValue.Channel)
 		return
 	}
-
 
 	if err := srv.SlackRepo.PostMessageToChat(srv.MessageToReply, event.EventValue.Channel, event.EventValue.Ts); err != nil {
 		log.Printf("[ERR] Got error while posting message to chat %s", err.Error())

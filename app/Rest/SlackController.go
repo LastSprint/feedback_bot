@@ -16,8 +16,7 @@ func (c *SlackController) Init() {
 	http.HandleFunc("/slack/cto/feedback", c.handleFeedbackCommand)
 }
 
-
-func (c* SlackController) handleFeedbackCommand(w http.ResponseWriter, r *http.Request) {
+func (c *SlackController) handleFeedbackCommand(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusNotImplemented)
 		w.Write([]byte("This http method isn't supported"))
