@@ -16,7 +16,7 @@ type config struct {
 	MessageToReply string `env:"STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY"`
 	AuthToken      string `env:"STEVE_SLACK_BOT_AUTH_TOKEN,unset"`
 
-	AllowedAuthorsIds   []string `env:"OPS_WTF_ALLOWED_AUTHORS_IDS" envDefault:"UFH46AX6W"`
+	RestrictedAuthorsIds   []string `env:"OPS_WTF_RESTRICTED_AUTHORS_IDS" envDefault:"UFH46AX6W"`
 	AllowedReportersIds []string `env:"ALLOWED_REPORTERS_IDS" envDefault:"UFH46AX6W"`
 	AllowedChannelsIds  []string `env:"ALLOWED_CHANNELS_IDS" envDefault:"C0251ECG4QP"`
 
@@ -53,7 +53,7 @@ func configureSteve(c config) {
 			ConfusingMessagesRepo: &Repo.ConfusingMessagesMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,
 			},
-			AllowedAuthorsIds:   c.AllowedAuthorsIds,
+			RestrictedAuthorsIds:   c.RestrictedAuthorsIds,
 			AllowedReportersIds: c.AllowedReportersIds,
 			AllowedChannels:     c.AllowedChannelsIds,
 		},

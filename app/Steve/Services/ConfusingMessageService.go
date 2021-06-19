@@ -16,7 +16,7 @@ type ConfusingMessageService struct {
 	ConfusingMessagesRepo
 
 	// AllowedAuthorsIds is array of userIds of people whose messages can be reported
-	AllowedAuthorsIds []string
+	RestrictedAuthorsIds []string
 	// AllowedReportersIds is array of userIds of people why can report
 	AllowedReportersIds []string
 	// AllowedChannels is array of ids if channels from which reported can be done
@@ -47,7 +47,7 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		return errors.Errorf("User who post is empty in %v", message)
 	}
 
-	if !contains(srv.AllowedAuthorsIds, message.Message.User) {
+	if contains(srv.RestrictedAuthorsIds, message.Message.User) {
 		return errors.Errorf("Reporting of this author is forbidden %s", message.Message.User)
 	}
 
