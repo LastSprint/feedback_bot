@@ -15,3 +15,5 @@
 # vendor/
 
 app/messages.db
+
+mondodb_data
