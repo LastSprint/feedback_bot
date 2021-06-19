@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 	"time"
 )
 
@@ -21,6 +22,12 @@ func (rep *ConfusingMessagesMongoDBRepo) Save(message Entry.ConfusingMessage) er
 	if err != nil {
 		return err
 	}
+
+	defer func() {
+		if err = client.Disconnect(context.Background()); err != nil {
+			log.Println("[WARN] Couldn't close DB connection with error", err.Error())
+		}
+	}()
 
 	collection := client.Database("ops").Collection("confusing_messages")
 
