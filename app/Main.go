@@ -37,6 +37,8 @@ func main() {
 	configureCTOFeedback(config)
 	configureSteve(config)
 
+	log.Println("[INFO] Started on :6654")
+
 	log.Fatal(http.ListenAndServe(":6654", nil))
 }
 

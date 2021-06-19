@@ -95,7 +95,14 @@ func (cnt *EventHandlerController) handleWtfCommand(w http.ResponseWriter, r *ht
 		return
 	}
 
+	if payload.CallbackId != "ops_wtf" {
+		log.Printf("[INFO] Got %s command. But expected ops_wtf. Ignore it. The whole payload %v", payload.CallbackId, payload)
+		return
+	}
+
 	if err := cnt.ConfusingShortcutService.Save(payload); err != nil {
 		log.Printf("[ERR] WTF command with request %s. Got error from service %s", r.URL, err.Error())
 	}
+
+	log.Printf("[INFO] Report from %s(%s) was written successfully", payload.User.Id, payload.User.Name)
 }
