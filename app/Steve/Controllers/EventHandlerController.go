@@ -83,6 +83,9 @@ func (cnt *EventHandlerController) verifyIfNeeded(w http.ResponseWriter, body []
 
 // handleWtfCommand handles `/ops_wtf` shortcut
 func (cnt *EventHandlerController) handleWtfCommand(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("[INFO] Get request", r.URL)
+
 	if err := r.ParseForm(); err != nil {
 		log.Printf("[ERR] WTF command with request %s. Got error while parsing url form %s", r.URL, err.Error())
 		return
