@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -55,7 +56,7 @@ func (r *SlackRepo) PostMessageToChat(message, channel, threadId string) error {
 		return err
 	}
 
-	data, err = json.Marshal(resp.Body)
+	data, err = ioutil.ReadAll(resp.Body)
 
 	if err != nil {
 		return err
@@ -70,6 +71,8 @@ func (r *SlackRepo) PostMessageToChat(message, channel, threadId string) error {
 	if resp.StatusCode != http.StatusOK {
 		return errors.New(fmt.Sprintf("POST on %s returned %v status code with body %s", req.URL, resp.StatusCode, string(data)))
 	}
+
+	fmt.Println(string(data))
 
 	return nil
 }
