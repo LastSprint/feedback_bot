@@ -1,15 +1,16 @@
 package Rest
 
 import (
+	"log"
 	"net/http"
 )
 
-type DbService interface {
-	WriteFeedbackMessage(string) error
+type NotificationService interface {
+	Notify(event, message string) error
 }
 
 type SlackController struct {
-	DB DbService
+	NotificationService
 }
 
 func (c *SlackController) Init() {
@@ -38,9 +39,9 @@ func (c *SlackController) handleFeedbackCommand(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	if err := c.DB.WriteFeedbackMessage(messageText); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+	if err := c.NotificationService.Notify("CTO_Feedback", messageText); err != nil {
+		log.Printf("[ERR] Couldn't sent feedback to slack with error %s. The message: %s", err.Error(), messageText)
+		w.Write([]byte("Couldn't write the message. Something went wrong with feedback bot :("))
 		return
 	}
 
