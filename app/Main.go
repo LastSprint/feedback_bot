@@ -15,7 +15,7 @@ import (
 type config struct {
 	BotSlackId     string `env:"STEVE_SLACK_BOT_ID" envDefault:"U025GCFUK6F"`
 	MessageToReply string `env:"STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY"`
-	AuthToken      string `env:"STEVE_SLACK_BOT_AUTH_TOKEN,unset" envDefault:"xoxb-526875387252-2186423971219-aXK56aUlxCVaNMwM4lUNbMZn"`
+	AuthToken      string `env:"STEVE_SLACK_BOT_AUTH_TOKEN,unset"`
 
 	RestrictedAuthorsIds []string `env:"OPS_WTF_RESTRICTED_AUTHORS_IDS" envDefault:"UFH46AX6W"`
 	AllowedReportersIds  []string `env:"ALLOWED_REPORTERS_IDS" envDefault:"UFH46AX6W"`
