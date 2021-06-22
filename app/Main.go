@@ -32,6 +32,14 @@ func main() {
 
 	config := config{}
 
+	log.Println("Config")
+	log.Println("STEVE_SLACK_BOT_ID: ", config.BotSlackId)
+	log.Println("STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY: ", config.MessageToReply)
+	log.Println("OPS_WTF_RESTRICTED_AUTHORS_IDS: ", config.RestrictedAuthorsIds)
+	log.Println("ALLOWED_REPORTERS_IDS: ", config.AllowedReportersIds)
+	log.Println("ALLOWED_CHANNELS_IDS: ", config.AllowedChannelsIds)
+	log.Println("SLACK_CHANNEL_ID_FOR_NOTIFICATIONS: ", config.SlackChannelIdForNotifications)
+
 	if err := env.Parse(&config); err != nil {
 		log.Fatal("[ERR] Couldn't parse config from env with error", err.Error())
 		return
