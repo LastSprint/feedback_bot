@@ -32,6 +32,8 @@ func (cnt *EventHandlerController) Init() {
 // handleChannelPush handles situation when somebody write something to channel (doesn;t matter in thread or not)
 func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *http.Request) {
 
+	log.Println("[INFO] Start push handler")
+
 	body, err := ioutil.ReadAll(r.Body)
 
 	if cnt.verifyIfNeeded(w, body) {

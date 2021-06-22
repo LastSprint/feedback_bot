@@ -52,4 +52,6 @@ func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
 	if err := srv.SlackRepo.PostMessageToChat(srv.MessageToReply, event.EventValue.Channel, event.EventValue.Ts); err != nil {
 		log.Printf("[ERR] Got error while posting message to chat %s", err.Error())
 	}
+
+	log.Printf("[INFO] Success reply on event: %v", event)
 }
