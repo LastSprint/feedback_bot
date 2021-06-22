@@ -23,6 +23,8 @@ type config struct {
 	FeedbackDbFilePath string `env:"FEEDBACK_BOT_DB_FILE_PATH"`
 
 	MongoDBConnectionString string `env:"MONGODB_CONNECTION_STRING,unset" envDefault:"mongodb://root:root@127.0.0.1:6355"`
+
+	SlackChannelIdForNotifications string `env:"SLACK_CHANNEL_ID_FOR_NOTIFICATIONS" envDefault:"DFH46B77C"`
 }
 
 func main() {
@@ -43,13 +45,16 @@ func main() {
 }
 
 func configureSteve(c config) {
+
+	slackRepo := &Repo.SlackRepo{
+		AuthToken: c.AuthToken,
+	}
+
 	steve := Controllers.EventHandlerController{
 		ReplyOnMessageService: &Services.ReplyOnMessageInThreadService{
 			BotSlackId:     c.BotSlackId,
 			MessageToReply: c.MessageToReply,
-			SlackRepo: &Repo.SlackRepo{
-				AuthToken: c.AuthToken,
-			},
+			SlackRepo:      slackRepo,
 		},
 		ConfusingShortcutService: &Services.ConfusingMessageService{
 			ConfusingMessagesRepo: &Repo.ConfusingMessagesMongoDBRepo{
@@ -58,6 +63,10 @@ func configureSteve(c config) {
 			RestrictedAuthorsIds: c.RestrictedAuthorsIds,
 			AllowedReportersIds:  c.AllowedReportersIds,
 			AllowedChannels:      c.AllowedChannelsIds,
+			NotificationService: &Services.SlackNotificationService{
+				SlackRepo:      slackRepo,
+				SlackChannelId: "",
+			},
 		},
 	}
 

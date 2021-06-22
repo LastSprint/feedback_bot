@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"fmt"
 	"github.com/LastSprint/feedback_bot/Steve/Models"
 	"github.com/LastSprint/feedback_bot/Steve/Models/Entry"
 	"github.com/pkg/errors"
@@ -12,8 +13,13 @@ type ConfusingMessagesRepo interface {
 	Save(message Entry.ConfusingMessage) error
 }
 
+type NotificationService interface {
+	Notify(event, message string) error
+}
+
 type ConfusingMessageService struct {
 	ConfusingMessagesRepo
+	NotificationService
 
 	// AllowedAuthorsIds is array of userIds of people whose messages can be reported
 	RestrictedAuthorsIds []string
@@ -67,7 +73,16 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		ReportDate:     time.Now(),
 	}
 
-	return srv.ConfusingMessagesRepo.Save(entry)
+	if err := srv.ConfusingMessagesRepo.Save(entry); err != nil {
+		return err
+	}
+
+	notificationMessage := fmt.Sprintf("reporter: %s; author: %s", message.User.Name, message.Message.User)
+	if err := srv.NotificationService.Notify("confusing_message_was_sent", notificationMessage); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func contains(source []string, value string) bool {

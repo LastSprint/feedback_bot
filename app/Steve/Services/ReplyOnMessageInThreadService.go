@@ -5,10 +5,6 @@ import (
 	"log"
 )
 
-type SlackRepo interface {
-	PostMessageToChat(message, channel, threadId string) error
-}
-
 const devOpsAndSaChannelID = "CFSF56EHK"
 const steveTestChannelId = "C0251ECG4QP"
 
