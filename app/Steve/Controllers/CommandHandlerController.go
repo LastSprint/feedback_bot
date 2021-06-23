@@ -111,7 +111,7 @@ func (cnt *CommandHandlerController) handleWorkLogAnalytics(w http.ResponseWrite
 	for _, it := range res {
 
 		if len(it.WorkLog) == 0 {
-			builder.WriteString(fmt.Sprintf("`%s` ничего не затрекал", it.UserName))
+			builder.WriteString(fmt.Sprintf("`%s` ничего не затрекал\n", it.UserName))
 			continue
 		}
 
