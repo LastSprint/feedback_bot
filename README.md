@@ -55,18 +55,14 @@ Slack api auth token must be set in `STEVE_SLACK_BOT_AUTH_TOKEN`
 
 All `ENV` parameters:
 
-`STEVE_SLACK_BOT_ID` - Id of the bot. This id should be the id of user whose token you use in `STEVE_SLACK_BOT_AUTH_TOKEN`
 
-`STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY` - Preformatted message which will be sent for any new message in shannels where `Steve` is
-
-`STEVE_SLACK_BOT_AUTH_TOKEN` - Slack API Auth token. Should belong to user which id you use in `STEVE_SLACK_BOT_ID`
-
-`OPS_WTF_RESTRICTED_AUTHORS_IDS` - Id of authors whe can't be reported by `Confusing!` (elements should be splitted by `,`)
-
-`ALLOWED_REPORTERS_IDS` - Idsof users who can report messages via `Confusing!` (elements should be splitted by `,`)
-
-`ALLOWED_CHANNELS_IDS` - Ids of channels from which messages can be reported via `Confusing!` (elements should be splitted by `,`)
-
-`MONGODB_CONNECTION_STRING` - Connection string with credentials to MongoDB instance
-
-`SLACK_CHANNEL_ID_FOR_NOTIFICATIONS` - channel (or user) id who should recieve information about success events or feedback
+| ENV  key |  Description |   
+|----------|--------------|
+|`STEVE_SLACK_BOT_ID`|Id of the bot. This id should be the id of user whose token you use in `STEVE_SLACK_BOT_AUTH_TOKEN`|
+|`STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY`|Preformatted message which will be sent for any new message in shannels where `Steve` is|
+|`STEVE_SLACK_BOT_AUTH_TOKEN`|Slack API Auth token. Should belong to user which id you use in `STEVE_SLACK_BOT_ID`|
+|`OPS_WTF_RESTRICTED_AUTHORS_IDS`|Id of authors whe can't be reported by `Confusing!` (elements should be splitted by `,`)|
+|`ALLOWED_REPORTERS_IDS`|Ids of users who can report messages via `Confusing!` (elements should be splitted by `,`)|
+|`ALLOWED_CHANNELS_IDS`|Ids of channels from which messages can be reported via `Confusing!` (elements should be splitted by `,`)|
+|`MONGODB_CONNECTION_STRING`|Connection string with credentials to MongoDB instance|
+|`SLACK_CHANNEL_ID_FOR_NOTIFICATIONS`|Channel (or user) id who should recieve information about success events or feedback|
