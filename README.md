@@ -17,6 +17,16 @@ How does it works:
 
 To determine the user who will recive feedback (CTO) use `SLACK_CHANNEL_ID_FOR_NOTIFICATIONS`
 
+### Ops And SA Weekly
+
+Command: `/ops_and_sa_weekly`
+
+Reports:
+- How many user' requests were
+- What kind of reports were and how many
+
+Use `STEVE_DEVOPS_AND_SA_CHANNEL_ID` to choose a channel from which channel reports and requests shout be counted
+
 ## Shortcuts
 
 ### Confusing!
@@ -81,3 +91,4 @@ All `ENV` parameters:
 |`ALLOWED_CHANNELS_IDS`|Ids of channels from which messages can be reported via `Confusing!` (elements should be splitted by `,`)|
 |`MONGODB_CONNECTION_STRING`|Connection string with credentials to MongoDB instance|
 |`SLACK_CHANNEL_ID_FOR_NOTIFICATIONS`|Channel (or user) id who should recieve information about success events or feedback|
+| `STEVE_DEVOPS_AND_SA_CHANNEL_ID`| used by `Ops And SA Weekly` to choose a channel from which channel reports and requests shout be counted |

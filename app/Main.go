@@ -21,6 +21,8 @@ type config struct {
 	AllowedReportersIds  []string `env:"ALLOWED_REPORTERS_IDS" envDefault:"UFH46AX6W"`
 	AllowedChannelsIds   []string `env:"ALLOWED_CHANNELS_IDS" envDefault:"C0251ECG4QP"`
 
+	DevOpsAndSAChannelId string `env:"STEVE_DEVOPS_AND_SA_CHANNEL_ID" envDefault:"CFSF56EHK"`
+
 	// SupportAutomationChannelToReply is array of channels in which the bot can post message as reply on `post message` event
 	// for details look at ReplyOnMessageInThreadService
 	SupportAutomationChannelToReply []string `env:"SUPPORT_AUTOMATION_CHANNELS_TO_REPLY" envDefault:"CFSF56EHK,C0251ECG4QP"`
@@ -50,20 +52,21 @@ func main() {
 	log.Println("SLACK_CHANNEL_ID_FOR_NOTIFICATIONS: ", config.SlackChannelIdForNotifications)
 
 	configureCTOFeedback(config)
-	configureSteve(config)
+	configureSteveEvents(config)
+	configureSteveCommands(config)
 
 	log.Println("[INFO] Started on :6654")
 
 	log.Fatal(http.ListenAndServe(":6654", nil))
 }
 
-func configureSteve(c config) {
+func configureSteveEvents(c config) {
 
 	slackRepo := &crepo.SlackRepo{
 		AuthToken: c.AuthToken,
 	}
 
-	steve := Controllers.EventHandlerController{
+	steveEvents := Controllers.EventHandlerController{
 		ReplyOnMessageService: &Services.ReplyOnMessageInThreadService{
 			BotSlackId:     c.BotSlackId,
 			MessageToReply: c.MessageToReply,
@@ -84,6 +87,22 @@ func configureSteve(c config) {
 				SlackRepo:      slackRepo,
 				SlackChannelId: c.SlackChannelIdForNotifications,
 			},
+		},
+	}
+
+	steveEvents.Init()
+}
+
+func configureSteveCommands(c config) {
+	steve := Controllers.CommandHandlerController{
+		SaWeekStatService: &Services.OpsAndSaStatisticsService{
+			SAStatisticRequestRepo:    &Repo.RequestsMongoDBRepo{
+				ConnectionString: c.MongoDBConnectionString,
+			},
+			SAStatReportsRepo:         &Repo.ConfusingMessagesMongoDBRepo{
+				ConnectionString: c.MongoDBConnectionString,
+			},
+			PublicSaRequestsChannelId: c.DevOpsAndSAChannelId,
 		},
 	}
 
