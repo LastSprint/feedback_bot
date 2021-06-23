@@ -21,6 +21,10 @@ type config struct {
 	AllowedReportersIds  []string `env:"ALLOWED_REPORTERS_IDS" envDefault:"UFH46AX6W"`
 	AllowedChannelsIds   []string `env:"ALLOWED_CHANNELS_IDS" envDefault:"C0251ECG4QP"`
 
+	// SupportAutomationChannelToReply is array of channels in which the bot can post message as reply on `post message` event
+	// for details look at ReplyOnMessageInThreadService
+	SupportAutomationChannelToReply []string `env:"SUPPORT_AUTOMATION_CHANNELS_TO_REPLY" envDefault:"CFSF56EHK,C0251ECG4QP"`
+
 	FeedbackDbFilePath string `env:"FEEDBACK_BOT_DB_FILE_PATH"`
 
 	MongoDBConnectionString string `env:"MONGODB_CONNECTION_STRING,unset" envDefault:"mongodb://root:root@127.0.0.1:6355"`
@@ -64,6 +68,10 @@ func configureSteve(c config) {
 			BotSlackId:     c.BotSlackId,
 			MessageToReply: c.MessageToReply,
 			SlackRepo:      slackRepo,
+			AllowedChannelsIds: c.SupportAutomationChannelToReply,
+			RequestsRepo: &Repo.RequestsMongoDBRepo{
+				ConnectionString: c.MongoDBConnectionString,
+			},
 		},
 		ConfusingShortcutService: &Services.ConfusingMessageService{
 			ConfusingMessagesRepo: &Repo.ConfusingMessagesMongoDBRepo{

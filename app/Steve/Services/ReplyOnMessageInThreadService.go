@@ -5,13 +5,16 @@ import (
 	"log"
 )
 
-const devOpsAndSaChannelID = "CFSF56EHK"
-const steveTestChannelId = "C0251ECG4QP"
+type RequestsRepo interface {
+	IncrementRequestCount(channelID string) error
+}
 
 type ReplyOnMessageInThreadService struct {
 	BotSlackId     string
 	MessageToReply string
 	SlackRepo
+	RequestsRepo
+	AllowedChannelsIds []string
 }
 
 func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
@@ -44,8 +47,8 @@ func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
 		return
 	}
 
-	if event.EventValue.Channel != steveTestChannelId && event.EventValue.Channel != devOpsAndSaChannelID {
-		log.Printf("[WARN] Got event from channel %s\n", event.EventValue.Channel)
+	if !contains(srv.AllowedChannelsIds, event.EventValue.Channel) {
+		log.Printf("[INFO] Avert replying on message from channel %s", event.EventValue.Channel)
 		return
 	}
 
@@ -54,4 +57,13 @@ func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
 	}
 
 	log.Printf("[INFO] Success reply on event: %v", event)
+
+	if srv.RequestsRepo == nil {
+		log.Println("[ERR] MongoDB repo in ReplyOnMessageInThreadService is nill. Abort writing operation")
+		return
+	}
+
+	if err := srv.RequestsRepo.IncrementRequestCount(event.EventValue.Channel); err != nil {
+		log.Printf("[ERR] while incrementing request count %s", err.Error())
+	}
 }

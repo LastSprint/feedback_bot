@@ -21,6 +21,8 @@ import (
 // - Bot replies in thread linked to event message
 // - Bot replies in 2 specific channels
 
+const devOpsAndSaChannelID = "CFSF56EHK"
+
 type SlackServiceStub struct {
 	calls        int
 	replyChannel string
@@ -45,6 +47,7 @@ func TestReplyOnMessageInThreadService_Reply_DoesNotReplyToItself(t *testing.T) 
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{devOpsAndSaChannelID},
 	}
 
 	event := Models.SlackEvent{
@@ -79,6 +82,7 @@ func TestReplyOnMessageInThreadService_Reply_DoesNotReplyInThread(t *testing.T) 
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{devOpsAndSaChannelID},
 	}
 
 	event := Models.SlackEvent{
@@ -113,6 +117,7 @@ func TestReplyOnMessageInThreadService_Reply_DoesNotReplyOnEditingOrDeletingEven
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{devOpsAndSaChannelID},
 	}
 
 	event := Models.SlackEvent{
@@ -149,6 +154,7 @@ func TestReplyOnMessageInThreadService_Reply_DoesNotReplyInRandomChannel(t *test
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{devOpsAndSaChannelID},
 	}
 
 	event := Models.SlackEvent{
@@ -183,6 +189,7 @@ func TestReplyOnMessageInThreadService_Reply_ToPerson(t *testing.T) {
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{devOpsAndSaChannelID},
 	}
 
 	event := Models.SlackEvent{
@@ -215,6 +222,7 @@ func TestReplyOnMessageInThreadService_Reply_ToRightChannel(t *testing.T) {
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{devOpsAndSaChannelID},
 	}
 
 	event := Models.SlackEvent{
@@ -248,6 +256,7 @@ func TestReplyOnMessageInThreadService_Reply_ToTestChannel(t *testing.T) {
 		BotSlackId:     botId,
 		MessageToReply: "123",
 		SlackRepo:      &slack,
+		AllowedChannelsIds: []string{"sdf"},
 	}
 
 	event := Models.SlackEvent{
@@ -256,7 +265,7 @@ func TestReplyOnMessageInThreadService_Reply_ToTestChannel(t *testing.T) {
 			Type:    "message",
 			User:    botId + "123",
 			Ts:      "123",
-			Channel: steveTestChannelId,
+			Channel: "sdf",
 		},
 	}
 
