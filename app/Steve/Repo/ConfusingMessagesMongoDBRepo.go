@@ -72,7 +72,7 @@ func (rep *ConfusingMessagesMongoDBRepo) GetCountForThisWeek(channelID string) (
 		"$and": bson.A{
 			bson.M{
 				"reportDate": bson.M{
-					"$lte": time.Now().Add(time.Duration(timeDiff)),
+					"$lte": time.Now(),
 				},
 			}, bson.M{
 				"reportDate": bson.M{

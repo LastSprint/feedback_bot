@@ -32,6 +32,8 @@ type config struct {
 	MongoDBConnectionString string `env:"MONGODB_CONNECTION_STRING,unset" envDefault:"mongodb://root:root@127.0.0.1:6355"`
 
 	SlackChannelIdForNotifications string `env:"SLACK_CHANNEL_ID_FOR_NOTIFICATIONS" envDefault:"UFH46AX6W"`
+
+	JiraAuthApiToken string `env:"JIRA_AUTH_API_TOKEN,unset"`
 }
 
 func main() {
@@ -68,9 +70,9 @@ func configureSteveEvents(c config) {
 
 	steveEvents := Controllers.EventHandlerController{
 		ReplyOnMessageService: &Services.ReplyOnMessageInThreadService{
-			BotSlackId:     c.BotSlackId,
-			MessageToReply: c.MessageToReply,
-			SlackRepo:      slackRepo,
+			BotSlackId:         c.BotSlackId,
+			MessageToReply:     c.MessageToReply,
+			SlackRepo:          slackRepo,
 			AllowedChannelsIds: c.SupportAutomationChannelToReply,
 			RequestsRepo: &Repo.RequestsMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,
@@ -96,13 +98,18 @@ func configureSteveEvents(c config) {
 func configureSteveCommands(c config) {
 	steve := Controllers.CommandHandlerController{
 		SaWeekStatService: &Services.OpsAndSaStatisticsService{
-			SAStatisticRequestRepo:    &Repo.RequestsMongoDBRepo{
+			SAStatisticRequestRepo: &Repo.RequestsMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,
 			},
-			SAStatReportsRepo:         &Repo.ConfusingMessagesMongoDBRepo{
+			SAStatReportsRepo: &Repo.ConfusingMessagesMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,
 			},
 			PublicSaRequestsChannelId: c.DevOpsAndSAChannelId,
+		},
+		TimeSpentAnalyticsService: &Services.TimeSpendDistributionService{
+			WorkLogRepo: &crepo.JiraTempoTimesheetRepo{
+				ApiToken: c.JiraAuthApiToken,
+			},
 		},
 	}
 

@@ -6,9 +6,19 @@ This service provides some Slack Shorcuts, Slack Slack Commands and other automa
 
 ## Commands
 
+| Command | Input Args| Description |   
+|----------|--------------|
+|`/cto_feedback`| `/cto_feedback and just text...` |Send feedback about Surf CTO to him |
+|`/ops_and_sa_weekly`| - | Send SA and DevOps work digest into chat |
+|`/steve_analyze_wl_btw_projects`| `/steve_analyze_wl_btw_projects jiraLogin1 jiraLogin2...` | Result: time that person spent for last 7 days distributed between his projects |
+
 ### CTO Feedback
 
-Or just a feedback in common. It's useful for gathering anonymous feedback about one specific person. In my case - about CTO.
+Command: `/cto_feedback`
+
+Input: just a feedback text after command
+
+Just a feedback in common. It's useful for gathering anonymous feedback about one specific person. In my case - about CTO.
 
 How does it works:
 1. Handles `POST /slack/cto/feedback` utl path (Slack Slach Command call it)
@@ -26,6 +36,20 @@ Reports:
 - What kind of reports were and how many
 
 Use `STEVE_DEVOPS_AND_SA_CHANNEL_ID` to choose a channel from which channel reports and requests shout be counted
+
+### Analyze WorkLog For Projects
+
+Command: `/steve_analyze_wl_btw_projects`
+
+Input: Jira logins of users whose work log you want to see (logins splitteed by whitespace)
+
+Result: time that person spent for last 7 days in form:
+
+```
+$USERNAME$ spent:
+- $PROJECT$: $TIME$
+...
+```
 
 ## Shortcuts
 
@@ -91,4 +115,5 @@ All `ENV` parameters:
 |`ALLOWED_CHANNELS_IDS`|Ids of channels from which messages can be reported via `Confusing!` (elements should be splitted by `,`)|
 |`MONGODB_CONNECTION_STRING`|Connection string with credentials to MongoDB instance|
 |`SLACK_CHANNEL_ID_FOR_NOTIFICATIONS`|Channel (or user) id who should recieve information about success events or feedback|
-| `STEVE_DEVOPS_AND_SA_CHANNEL_ID`| used by `Ops And SA Weekly` to choose a channel from which channel reports and requests shout be counted |
+|`STEVE_DEVOPS_AND_SA_CHANNEL_ID`| used by `Ops And SA Weekly` to choose a channel from which channel reports and requests shout be counted |
+|`JIRA_AUTH_API_TOKEN`| Used to get access to JIRA API |
