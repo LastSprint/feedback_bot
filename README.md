@@ -21,6 +21,10 @@ To determine the user who will recive feedback (CTO) use `SLACK_CHANNEL_ID_FOR_N
 
 ### Confusing!
 
+CallbackID: `ops_wtf`
+
+ReportType: `bad_request`
+
 We use it for reporting some confusing requests to system administrators.
 
 For example when people say nothing about details, etc. 
@@ -34,6 +38,16 @@ How does it works:
     3. Author of reported message is reportable (author's id is **not** listed in `OPS_WTF_RESTRICTED_AUTHORS_IDS`)
 4. Service save the report to MongoDB which is connected by `MONGODB_CONNECTION_STRING`
 5. Service sents information about report (just about event) to specific channel (which id was written in `SLACK_CHANNEL_ID_FOR_NOTIFICATIONS`)
+
+### JenkinsLogsWasNotRead
+
+CallbackID: `did_not_read_jenkins_logs`
+
+ReportType: `did_not_read_jenkins_logs`
+
+Should be called if somebody create request about errors in Jenkins' build, but he/she didn't event open logs page.
+
+The algorithm is the same as in `Confusign!` (actually the code is the same)
 
 ## Automatizations
 

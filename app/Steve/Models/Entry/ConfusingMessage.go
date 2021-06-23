@@ -13,4 +13,5 @@ type ConfusingMessage struct {
 	// MessageId is a uniq id of the message
 	MessageId  string    `bson:"messageId,omitempty"`
 	ReportDate time.Time `bson:"reportDate,omitempty"`
+	ReportType string    `bson:"report_type"`
 }

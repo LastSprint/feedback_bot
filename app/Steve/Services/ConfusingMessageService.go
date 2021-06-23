@@ -57,6 +57,12 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		return errors.Errorf("Reporting of this author is forbidden %s", message.Message.User)
 	}
 
+	reportType := message.GetReportType()
+
+	if len(reportType) == 0 {
+		return errors.Errorf("Can't convert event callback %s to any report types", message.CallbackId)
+	}
+
 	// saving
 
 	// we create uniq id by concatenate `AuthorId_MessageTS_ChannelId`
@@ -71,13 +77,14 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		Text:           message.Message.Text,
 		MessageId:      messageID,
 		ReportDate:     time.Now(),
+		ReportType:     reportType,
 	}
 
 	if err := srv.ConfusingMessagesRepo.Save(entry); err != nil {
 		return err
 	}
 
-	notificationMessage := fmt.Sprintf("reporter: %s; author: %s", message.User.Name, message.Message.User)
+	notificationMessage := fmt.Sprintf("type: %s; reporter: %s; author: %s", reportType, message.User.Name, message.Message.User)
 	if err := srv.NotificationService.Notify("confusing_message_was_sent", notificationMessage); err != nil {
 		return err
 	}
