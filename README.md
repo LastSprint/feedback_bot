@@ -41,7 +41,7 @@ How does it works:
 
 ### JenkinsLogsWasNotRead
 
-CallbackID: `did_not_read_jenkins_logs`
+CallbackID: `ops_didnt_read_jenkins_log`
 
 ReportType: `did_not_read_jenkins_logs`
 

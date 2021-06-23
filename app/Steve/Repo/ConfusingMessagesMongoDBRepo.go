@@ -33,6 +33,7 @@ func (rep *ConfusingMessagesMongoDBRepo) Save(message Entry.ConfusingMessage) er
 
 	filter := Entry.ConfusingMessage{
 		MessageId: message.MessageId,
+		ReportType: message.ReportType,
 	}
 
 	update := bson.M{
