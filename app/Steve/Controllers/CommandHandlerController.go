@@ -86,7 +86,10 @@ func (cnt *CommandHandlerController) handleWorkLogAnalytics(w http.ResponseWrite
 
 	userNames := strings.Split(messageText, " ")
 
-	res, err := cnt.TimeSpentAnalyticsService.GetAllIssuesWithTimeSpent(time.Now().Add(time.Hour*24*7*-1), time.Now(), userNames)
+	timeFrom := time.Now().Add(time.Hour*24*7*-1)
+	timeTo := time.Now()
+
+	res, err := cnt.TimeSpentAnalyticsService.GetAllIssuesWithTimeSpent(timeFrom, timeTo, userNames)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -100,6 +103,10 @@ func (cnt *CommandHandlerController) handleWorkLogAnalytics(w http.ResponseWrite
 	}
 
 	builder := strings.Builder{}
+
+	const timeFormat = "2006-01-02"
+
+	builder.WriteString(fmt.Sprintf("Результат за период %s - %s\n", timeFrom.Format(timeFormat), timeTo.Format(timeFormat)))
 
 	for _, it := range res {
 
