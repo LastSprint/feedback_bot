@@ -39,15 +39,15 @@ How does it works:
 
 ### 0-level support
 
-**WARNING** 
-
-Don't add steve to any random channel, because this automatization will push messages in any channel where `Steve` is
-
 1. Listen for all channels in which bot `Steve` was added
 2. If new message was posted to one of this channel the `POST /slack_events/steve` will be called by slack
-3. Service validate that author of this message wasn't this bot (vai comparing author id with this bot id which was set in `STEVE_SLACK_BOT_ID`)
+3. Service validate that author of this message wasn't this bot (via comparing author id with this bot id which was set in `STEVE_SLACK_BOT_ID`)
 4. Validates that this message wasn't in thread
+5. Validates that message was sent from channel listed in `SUPPORT_AUTOMATION_CHANNELS_TO_REPLY`
 5. Send specific message in thread linked to the user's message (text fo the message should be set in `STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY`)
+6. Increment requests count in MongoDB
+
+---
 
 Slack api auth token must be set in `STEVE_SLACK_BOT_AUTH_TOKEN`
 
@@ -60,6 +60,7 @@ All `ENV` parameters:
 |----------|--------------|
 |`STEVE_SLACK_BOT_ID`|Id of the bot. This id should be the id of user whose token you use in `STEVE_SLACK_BOT_AUTH_TOKEN`|
 |`STEVE_SLACK_BOT_DEVOPS_INFO_MESSAGE_TO_REPLY`|Preformatted message which will be sent for any new message in shannels where `Steve` is|
+|`SUPPORT_AUTOMATION_CHANNELS_TO_REPLY`|Array of channel ids in which `Steve` can reply on event of creating message|
 |`STEVE_SLACK_BOT_AUTH_TOKEN`|Slack API Auth token. Should belong to user which id you use in `STEVE_SLACK_BOT_ID`|
 |`OPS_WTF_RESTRICTED_AUTHORS_IDS`|Id of authors whe can't be reported by `Confusing!` (elements should be splitted by `,`)|
 |`ALLOWED_REPORTERS_IDS`|Ids of users who can report messages via `Confusing!` (elements should be splitted by `,`)|
