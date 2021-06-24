@@ -7,9 +7,12 @@ import (
 	"github.com/LastSprint/feedback_bot/Steve/Controllers"
 	"github.com/LastSprint/feedback_bot/Steve/Repo"
 	"github.com/LastSprint/feedback_bot/Steve/Services"
+	"github.com/LastSprint/feedback_bot/Steve/Services/TechnologyWidspreadAnalyze"
 	"github.com/caarlos0/env/v6"
 	"log"
 	"net/http"
+
+	jiraService "github.com/LastSprint/JiraGoIssues/services"
 )
 
 type config struct {
@@ -56,6 +59,7 @@ func main() {
 	configureCTOFeedback(config)
 	configureSteveEvents(config)
 	configureSteveCommands(config)
+	configureSteveAnalyzesCommands(config)
 
 	log.Println("[INFO] Started on :6654")
 
@@ -110,6 +114,22 @@ func configureSteveCommands(c config) {
 			WorkLogRepo: &crepo.JiraTempoTimesheetRepo{
 				ApiToken: c.JiraAuthApiToken,
 			},
+		},
+	}
+
+	steve.Init()
+}
+
+func configureSteveAnalyzesCommands(c config) {
+
+	jiraRepo := jiraService.NewJiraIssueLoader("https://jira.surfstudio.ru/rest/api/2/search", c.JiraAuthApiToken)
+
+	steve := Controllers.CommandAnalyticsController{
+		Templates: &TechnologyWidspreadAnalyze.TemplatesService{
+			JiraRepo: jiraRepo,
+		},
+		SurfGen: &TechnologyWidspreadAnalyze.SurfGenService{
+			JiraRepo: jiraRepo,
 		},
 	}
 

@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"github.com/LastSprint/feedback_bot/Common/Utils"
 	models "github.com/LastSprint/feedback_bot/Steve/Models"
 	"log"
 )
@@ -47,7 +48,7 @@ func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
 		return
 	}
 
-	if !contains(srv.AllowedChannelsIds, event.EventValue.Channel) {
+	if !Utils.Contains(srv.AllowedChannelsIds, event.EventValue.Channel) {
 		log.Printf("[INFO] Avert replying on message from channel %s", event.EventValue.Channel)
 		return
 	}

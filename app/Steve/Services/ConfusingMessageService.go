@@ -2,6 +2,7 @@ package Services
 
 import (
 	"fmt"
+	"github.com/LastSprint/feedback_bot/Common/Utils"
 	"github.com/LastSprint/feedback_bot/Steve/Models"
 	"github.com/LastSprint/feedback_bot/Steve/Models/Entry"
 	"github.com/pkg/errors"
@@ -37,7 +38,7 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		return errors.Errorf("Channel is empty in %v", message)
 	}
 
-	if !contains(srv.AllowedChannels, message.Channel.Id) {
+	if !Utils.Contains(srv.AllowedChannels, message.Channel.Id) {
 		return errors.Errorf("Report from restricted channel %s", message.Channel.Id)
 	}
 
@@ -45,7 +46,7 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		return errors.Errorf("User is empty in %v", message)
 	}
 
-	if !contains(srv.AllowedReportersIds, message.User.Id) {
+	if !Utils.Contains(srv.AllowedReportersIds, message.User.Id) {
 		return errors.Errorf("Report from restricted user %s", message.User.Id)
 	}
 
@@ -53,7 +54,7 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		return errors.Errorf("User who post is empty in %v", message)
 	}
 
-	if contains(srv.RestrictedAuthorsIds, message.Message.User) {
+	if Utils.Contains(srv.RestrictedAuthorsIds, message.Message.User) {
 		return errors.Errorf("Reporting of this author is forbidden %s", message.Message.User)
 	}
 
@@ -90,14 +91,4 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 	}
 
 	return nil
-}
-
-func contains(source []string, value string) bool {
-	for _, it := range source {
-		if it == value {
-			return true
-		}
-	}
-
-	return false
 }
