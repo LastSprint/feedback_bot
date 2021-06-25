@@ -11,7 +11,7 @@ This service provides some Slack Shorcuts, Slack Slack Commands and other automa
 |`/cto_feedback`| `/cto_feedback and just text...` |Send feedback about Surf CTO to him |
 |`/ops_and_sa_weekly`| - | Send SA and DevOps work digest into chat |
 |`/steve_analyze_wl_btw_projects`| `/steve_analyze_wl_btw_projects jiraLogin1 jiraLogin2...` | Result: time that person spent for last 7 days distributed between his projects |
-
+| `/steve_tech_ws` | - | Print internal technologies adaptation|
 ### CTO Feedback
 
 Command: `/cto_feedback`
@@ -50,6 +50,12 @@ $USERNAME$ spent:
 - $PROJECT$: $TIME$
 ...
 ```
+
+### Technologies Adaptation
+
+Command: `/steve_tech_ws`
+
+Will print adaptation of `Templates` and `SurfGen`
 
 ## Shortcuts
 
