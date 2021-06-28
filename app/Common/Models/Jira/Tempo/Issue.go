@@ -9,7 +9,7 @@ type Issue struct {
 	Summary                   string   `json:"summary"`
 	IssueType                 string   `json:"issueType"`
 	ProjectId                 int      `json:"projectId"`
-	Components                []string `json:"components"`
+	//Components                []string `json:"components"`
 	ProjectKey                string   `json:"projectKey"`
 	IconUrl                   string   `json:"iconUrl"`
 	Versions                  []string `json:"versions"`
