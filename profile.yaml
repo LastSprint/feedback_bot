@@ -1,0 +1,6 @@
+schemas:
+  Object:
+    type: object
+    properties:
+      name:
+        type: string
