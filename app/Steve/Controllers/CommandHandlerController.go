@@ -84,9 +84,21 @@ func (cnt *CommandHandlerController) handleWorkLogAnalytics(w http.ResponseWrite
 		return
 	}
 
-	userNames := strings.Split(messageText, " ")
+	splited := strings.Split(messageText, " ")
 
-	timeFrom := time.Now().Add(time.Hour*24*7*-1)
+	if len(splited) == 0 {
+		w.Write([]byte("You should provide usernames"))
+		return
+	}
+
+	timeFrom, err := time.Parse("2006-01-02", splited[0])
+	userNames := splited[1:]
+	if err != nil {
+		timeFrom = time.Now().Add(time.Hour*24*7*-1)
+		userNames = splited
+		log.Printf("[WARN] Error while parsing timeFrom from value %s; Error: %s", splited[0], err.Error())
+	}
+
 	timeTo := time.Now()
 
 	res, err := cnt.TimeSpentAnalyticsService.GetAllIssuesWithTimeSpent(timeFrom, timeTo, userNames)
