@@ -11,9 +11,7 @@ type RequestsRepo interface {
 }
 
 type ReplyOnMessageInThreadService struct {
-	BotSlackId     string
-	MessageToReply string
-	SlackRepo
+	BotSlackId string
 	RequestsRepo
 	AllowedChannelsIds []string
 }
@@ -53,9 +51,11 @@ func (srv *ReplyOnMessageInThreadService) Reply(event models.SlackEvent) {
 		return
 	}
 
-	if err := srv.SlackRepo.PostMessageToChat(srv.MessageToReply, event.EventValue.Channel, event.EventValue.Ts); err != nil {
-		log.Printf("[ERR] Got error while posting message to chat %s", err.Error())
-	}
+	// we decided to stop posting messages automatically
+
+	//if err := srv.SlackRepo.PostMessageToChat(srv.MessageToReply, event.EventValue.Channel, event.EventValue.Ts); err != nil {
+	//	log.Printf("[ERR] Got error while posting message to chat %s", err.Error())
+	//}
 
 	log.Printf("[INFO] Success reply on event: %v", event)
 

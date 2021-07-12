@@ -75,8 +75,6 @@ func configureSteveEvents(c config) {
 	steveEvents := Controllers.EventHandlerController{
 		ReplyOnMessageService: &Services.ReplyOnMessageInThreadService{
 			BotSlackId:         c.BotSlackId,
-			MessageToReply:     c.MessageToReply,
-			SlackRepo:          slackRepo,
 			AllowedChannelsIds: c.SupportAutomationChannelToReply,
 			RequestsRepo: &Repo.RequestsMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,
@@ -89,6 +87,8 @@ func configureSteveEvents(c config) {
 			RestrictedAuthorsIds: c.RestrictedAuthorsIds,
 			AllowedReportersIds:  c.AllowedReportersIds,
 			AllowedChannels:      c.AllowedChannelsIds,
+			MessageToReply:       c.MessageToReply,
+			SlackRepo:            slackRepo,
 			NotificationService: &cservices.SlackNotificationService{
 				SlackRepo:      slackRepo,
 				SlackChannelId: c.SlackChannelIdForNotifications,

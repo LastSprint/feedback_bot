@@ -6,6 +6,7 @@ import (
 	"github.com/LastSprint/feedback_bot/Steve/Models"
 	"github.com/LastSprint/feedback_bot/Steve/Models/Entry"
 	"github.com/pkg/errors"
+	"log"
 	"strings"
 	"time"
 )
@@ -21,7 +22,8 @@ type NotificationService interface {
 type ConfusingMessageService struct {
 	ConfusingMessagesRepo
 	NotificationService
-
+	SlackRepo
+	MessageToReply string
 	// AllowedAuthorsIds is array of userIds of people whose messages can be reported
 	RestrictedAuthorsIds []string
 	// AllowedReportersIds is array of userIds of people why can report
@@ -79,6 +81,11 @@ func (srv *ConfusingMessageService) Save(message Models.MessageShortcutCallBackM
 		MessageId:      messageID,
 		ReportDate:     time.Now(),
 		ReportType:     reportType,
+	}
+
+	if err := srv.SlackRepo.PostMessageToChat(srv.MessageToReply, message.Channel.Id, message.Message.Ts); err != nil {
+		log.Println("[ERR] Can't send message to slack")
+		return err
 	}
 
 	if err := srv.ConfusingMessagesRepo.Save(entry); err != nil {
