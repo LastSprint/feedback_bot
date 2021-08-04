@@ -1,5 +1,11 @@
 package Models
 
+type EventItem struct {
+	Type      string `json:"type"`
+	ChannelId string `json:"channel"`
+	Ts        string `json:"ts"`
+}
+
 // Event contains payload information about event-entity
 type Event struct {
 	// Type can me `message`
@@ -19,5 +25,7 @@ type Event struct {
 	// ChannelType can me `channel`
 	ChannelType string `json:"channel_type"`
 	// ThreadTs exists only if this event occured in thread
-	ThreadTs string `json:"thread_ts"`
+	ThreadTs string    `json:"thread_ts"`
+	Reaction string    `json:"reaction"`
+	Item     EventItem `json:"item"`
 }

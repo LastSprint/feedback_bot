@@ -2,23 +2,24 @@ package Controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	models "github.com/LastSprint/feedback_bot/Steve/Models"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
+type Dispatcher interface {
+	Dispatch(event models.SlackEvent) error
+}
+
 type ConfusingShortcutService interface {
 	Save(message models.MessageShortcutCallBackModel) error
 }
 
-type ReplyOnMessageService interface {
-	Reply(event models.SlackEvent)
-}
-
 // EventHandlerController handles slack events
 type EventHandlerController struct {
-	ReplyOnMessageService
+	Dispatcher
 	ConfusingShortcutService
 }
 
@@ -29,7 +30,7 @@ func (cnt *EventHandlerController) Init() {
 	http.HandleFunc("/commands/ops/wtf", cnt.handleWtfCommand)
 }
 
-// handleChannelPush handles situation when somebody write something to channel (doesn;t matter in thread or not)
+// handleChannelPush handles situation when somebody write something to channel (doesn't matter in thread or not)
 func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("[INFO] Start push handler")
@@ -46,6 +47,8 @@ func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *h
 		return
 	}
 
+	fmt.Println("[MEM]", string(body))
+
 	w.WriteHeader(http.StatusOK)
 
 	go func() {
@@ -56,7 +59,10 @@ func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *h
 			log.Println("[ERR] Couldn't parse body " + err.Error())
 			return
 		}
-		cnt.ReplyOnMessageService.Reply(event)
+
+		if err = cnt.Dispatcher.Dispatch(event); err != nil {
+			fmt.Printf("[ERR] An error occurred for event %v\nError: %s", event, err.Error())
+		}
 	}()
 }
 

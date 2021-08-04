@@ -1,0 +1,50 @@
+{
+  "token": "EvrkQP8YAA1REYQbc7xWTAkm",
+  "team_id": "TFGRRBD7E",
+  "api_app_id": "ANCE0LP9N",
+  "event": {
+    "client_msg_id": "f75bd13c-b217-4157-b912-2c3f0911cc15",
+    "type": "message",
+    "text": "Сообщение",
+    "user": "UFH46AX6W",
+    "ts": "1628068762.000300",
+    "team": "TFGRRBD7E",
+    "blocks": [
+      {
+        "type": "rich_text",
+        "block_id": "L=L",
+        "elements": [
+          {
+            "type": "rich_text_section",
+            "elements": [
+              {
+                "type": "text",
+                "text": "Сообщение"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "channel": "C0251ECG4QP",
+    "event_ts": "1628068762.000300",
+    "channel_type": "channel"
+  },
+  "type": "event_callback",
+  "event_id": "Ev02A547G5EF",
+  "event_time": 1628068762,
+  "authed_users": [
+    "U025GCFUK6F"
+  ],
+  "authorizations": [
+    {
+      "enterprise_id": null,
+      "team_id": "TFGRRBD7E",
+      "user_id": "U025GCFUK6F",
+      "is_bot": true,
+      "is_enterprise_install": false
+    }
+  ],
+  "is_ext_shared_channel": false,
+  "event_context": "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJURkdSUkJEN0UiLCJhaWQiOiJBTkNFMExQOU4iLCJjaWQiOiJDMDI1MUVDRzRRUCJ9"
+}

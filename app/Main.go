@@ -72,14 +72,10 @@ func configureSteveEvents(c config) {
 		AuthToken: c.AuthToken,
 	}
 
+	slackEventDispatcher := configureSlackEventDispatcher(c)
+
 	steveEvents := Controllers.EventHandlerController{
-		ReplyOnMessageService: &Services.ReplyOnMessageInThreadService{
-			BotSlackId:         c.BotSlackId,
-			AllowedChannelsIds: c.SupportAutomationChannelToReply,
-			RequestsRepo: &Repo.RequestsMongoDBRepo{
-				ConnectionString: c.MongoDBConnectionString,
-			},
-		},
+		Dispatcher: slackEventDispatcher,
 		ConfusingShortcutService: &Services.ConfusingMessageService{
 			ConfusingMessagesRepo: &Repo.ConfusingMessagesMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,

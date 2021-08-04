@@ -17,7 +17,7 @@ type SAStatReportsRepo interface {
 	GetCountForThisWeek(channelID string) (map[string]int, error)
 }
 
-// SAStatisticsService get statistic about SA work and send it to specific slack channel
+// OpsAndSaStatisticsService get statistic about SA work and send it to specific slack channel
 //
 // What kind of statistics:
 //	1. Count of requests in public chat
