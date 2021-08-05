@@ -24,9 +24,10 @@ type ReactionHandler struct {
 func (h *ReactionHandler) Handle(event Models.SlackEvent) error {
 
 	reactionModel := Services.AddReactionServiceModel{
-		Reaction:  event.EventValue.Reaction,
-		Channel:   event.EventValue.Item.ChannelId,
-		MessageId: event.EventValue.Item.Ts,
+		Reaction:       event.EventValue.Reaction,
+		Channel:        event.EventValue.Item.ChannelId,
+		MessageId:      event.EventValue.Item.Ts,
+		ReporterUserId: event.EventValue.User,
 	}
 
 	switch Dispatcher.EventTypeKey(event.EventValue.Type) {
