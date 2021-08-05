@@ -31,14 +31,20 @@ func (r *ReactionsMongoDBRepo) AddReactionIfNotAddedPreviously(reaction, channel
 
 	collection := client.Database("ops").Collection("reactions")
 
+	year, week := time.Now().ISOWeek()
+
 	filter := Entry.MsgReaction{
 		ChannelId: channelId,
 		MessageId: messageId,
+		Year:      year,
+		Week:      week,
 	}
 
+	filedName := "reactions." + reaction
+
 	update := bson.M{
-		"$addToSet": bson.M{
-			"reactions": reaction,
+		"$inc": bson.M{
+			filedName: 1,
 		},
 	}
 
@@ -68,22 +74,71 @@ func (r *ReactionsMongoDBRepo) RemoveReactionIfPossible(reaction, channelId, mes
 
 	collection := client.Database("ops").Collection("reactions")
 
+	year, week := time.Now().ISOWeek()
+
 	filter := Entry.MsgReaction{
 		ChannelId: channelId,
 		MessageId: messageId,
+		Year:      year,
+		Week:      week,
 	}
 
+	filedName := "reactions." + reaction
+
 	update := bson.M{
-		"$pull": bson.M{
-			"reactions": reaction,
+		"$inc": bson.M{
+			filedName: -1,
 		},
 	}
 
-	_, err = collection.UpdateOne(context.TODO(), filter, update, options.Update().SetUpsert(false))
+	_, err = collection.UpdateOne(context.TODO(), filter, update)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (r *ReactionsMongoDBRepo) ReadReactions() (map[string]int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(r.ConnectionString))
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err = client.Disconnect(context.Background()); err != nil {
+			log.Println("[WARN] Couldn't close DB connection with error", err.Error())
+		}
+	}()
+
+	collection := client.Database("ops").Collection("reactions")
+
+	year, week := time.Now().ISOWeek()
+
+	filter := Entry.TimeFrame{
+		Year: year,
+		Week: week,
+	}
+
+	result := collection.FindOne(context.TODO(), filter)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err = result.Err(); err != nil {
+		return nil, err
+	}
+
+	reactions := Entry.MsgReaction{}
+
+	if err = result.Decode(&reactions); err != nil {
+		return nil, err
+	}
+
+	return reactions.Reactions, nil
 }

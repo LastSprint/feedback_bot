@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"runtime"
 )
 
 type Dispatcher interface {
@@ -47,8 +48,6 @@ func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *h
 		return
 	}
 
-	fmt.Println("[MEM]", string(body))
-
 	w.WriteHeader(http.StatusOK)
 
 	go func() {
@@ -64,6 +63,30 @@ func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *h
 			fmt.Printf("[ERR] An error occurred for event %v\nError: %s", event, err.Error())
 		}
 	}()
+}
+
+// handleWtfCommand handles `/ops_wtf` shortcut
+func (cnt *EventHandlerController) handleWtfCommand(_ http.ResponseWriter, r *http.Request) {
+
+	log.Println("[INFO] Get request", r.URL)
+
+	if err := r.ParseForm(); err != nil {
+		log.Printf("[ERR] WTF command with request %s. Got error while parsing url form %s", r.URL, err.Error())
+		return
+	}
+
+	var payload models.MessageShortcutCallBackModel
+
+	if err := json.Unmarshal([]byte(r.Form.Get("payload")), &payload); err != nil {
+		log.Printf("[ERR] WTF command with request %s. Got error while parsing payload to json %s", r.URL, err.Error())
+		return
+	}
+
+	if err := cnt.ConfusingShortcutService.Save(payload); err != nil {
+		log.Printf("[ERR] WTF command with request %s. Got error from service %s", r.URL, err.Error())
+	}
+
+	log.Printf("[INFO] Report from %s(%s) was written successfully", payload.User.Id, payload.User.Name)
 }
 
 // verifyIfNeeded check if request is slack-verification request
@@ -89,26 +112,8 @@ func (cnt *EventHandlerController) verifyIfNeeded(w http.ResponseWriter, body []
 	return true
 }
 
-// handleWtfCommand handles `/ops_wtf` shortcut
-func (cnt *EventHandlerController) handleWtfCommand(w http.ResponseWriter, r *http.Request) {
-
-	log.Println("[INFO] Get request", r.URL)
-
-	if err := r.ParseForm(); err != nil {
-		log.Printf("[ERR] WTF command with request %s. Got error while parsing url form %s", r.URL, err.Error())
-		return
+func printErrorIfNeeded(err error) {
+	if err != nil {
+		fmt.Println("[FATAL]", err, string(runtime.ReadTrace()))
 	}
-
-	var payload models.MessageShortcutCallBackModel
-
-	if err := json.Unmarshal([]byte(r.Form.Get("payload")), &payload); err != nil {
-		log.Printf("[ERR] WTF command with request %s. Got error while parsing payload to json %s", r.URL, err.Error())
-		return
-	}
-
-	if err := cnt.ConfusingShortcutService.Save(payload); err != nil {
-		log.Printf("[ERR] WTF command with request %s. Got error from service %s", r.URL, err.Error())
-	}
-
-	log.Printf("[INFO] Report from %s(%s) was written successfully", payload.User.Id, payload.User.Name)
 }

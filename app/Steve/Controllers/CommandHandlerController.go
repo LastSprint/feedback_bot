@@ -32,7 +32,8 @@ func (cnt *CommandHandlerController) Init() {
 	http.HandleFunc("/command/analytics/user_project_spent", cnt.handleWorkLogAnalytics)
 }
 
-func (cnt *CommandHandlerController) handleSaWeeklyStat(w http.ResponseWriter, r *http.Request) {
+// handleSaWeeklyStat for `POST /commands/ops/weekly_stat`
+func (cnt *CommandHandlerController) handleSaWeeklyStat(w http.ResponseWriter, _ *http.Request) {
 	stat, err := cnt.SaWeekStatService.GatherStatistic()
 
 	if err != nil {
@@ -44,26 +45,9 @@ func (cnt *CommandHandlerController) handleSaWeeklyStat(w http.ResponseWriter, r
 	strBuilder := strings.Builder{}
 	strBuilder.WriteString("Всем привет!\nЭта неделя почти закончилась:party_blob:\n\nВот что случилось за это время:\n")
 	strBuilder.WriteString(fmt.Sprintf("- Запросов сделано в #devops_and_sa: `%v`", stat.RequestsCount))
-	if len(stat.ReportedRequestsCount) == 0 {
-		strBuilder.WriteString("\n\nИ ничего не было зарепорчено. Это хорошо или плохо? :hm:")
-		writeMessageInPublicVisibility(strBuilder.String(), w)
-		return
-	}
 
-	strBuilder.WriteString("\n\nКакие запросы были зарепорчены:")
-
-	for key, value := range stat.ReportedRequestsCount {
-		nameOfType := ""
-		switch key {
-		case DTO.ReportTypeBadRequest:
-			nameOfType = "Непонятный запрос:"
-		case DTO.ReportTypeDidNotReadJenkinsLogs:
-			nameOfType = "Не читал(а) логи:"
-		default:
-			continue
-		}
-		strBuilder.WriteString(fmt.Sprintf("\n- %s `%v`", nameOfType, value))
-	}
+	writeReportsIfPossible(&strBuilder, stat)
+	writeReactionsIfPossible(&strBuilder, stat)
 
 	writeMessageInPublicVisibility(strBuilder.String(), w)
 }
@@ -94,7 +78,7 @@ func (cnt *CommandHandlerController) handleWorkLogAnalytics(w http.ResponseWrite
 	timeFrom, err := time.Parse("2006-01-02", splited[0])
 	userNames := splited[1:]
 	if err != nil {
-		timeFrom = time.Now().Add(time.Hour*24*7*-1)
+		timeFrom = time.Now().Add(time.Hour * 24 * 7 * -1)
 		userNames = splited
 		log.Printf("[WARN] Error while parsing timeFrom from value %s; Error: %s", splited[0], err.Error())
 	}
@@ -167,4 +151,40 @@ func formatTime(seconds int) string {
 		return fmt.Sprintf("%.2f ч.", hours)
 	}
 	return fmt.Sprintf("%d мин.", minutes)
+}
+
+func writeReportsIfPossible(builder *strings.Builder, stat *DTO.SAWeeklyStat) {
+	if len(stat.ReportedRequestsCount) == 0 {
+		builder.WriteString("\n\nИ ничего не было зарепорчено. Это хорошо или плохо? :hm:")
+		return
+	}
+
+	builder.WriteString("\n\nКакие запросы были зарепорчены:")
+
+	for key, value := range stat.ReportedRequestsCount {
+		nameOfType := ""
+		switch key {
+		case DTO.ReportTypeBadRequest:
+			nameOfType = "Непонятный запрос:"
+		case DTO.ReportTypeDidNotReadJenkinsLogs:
+			nameOfType = "Не читал(а) логи:"
+		default:
+			continue
+		}
+		builder.WriteString(fmt.Sprintf("\n- %s `%v`", nameOfType, value))
+	}
+}
+
+func writeReactionsIfPossible(builder *strings.Builder, stat *DTO.SAWeeklyStat) {
+	if len(stat.Reactions) == 0 {
+		builder.WriteString("Никаких реакций не было :(")
+		return
+	}
+
+	builder.WriteString("\n\nКакие реакции ставили SA:")
+
+	for key, val := range stat.Reactions {
+		str := fmt.Sprintf(":%s::%v\n", key, val)
+		builder.WriteString(str)
+	}
 }

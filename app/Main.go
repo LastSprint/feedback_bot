@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	crepo "github.com/LastSprint/feedback_bot/Common/Repo"
 	cservices "github.com/LastSprint/feedback_bot/Common/Services"
 	"github.com/LastSprint/feedback_bot/Rest"
@@ -11,6 +12,7 @@ import (
 	"github.com/caarlos0/env/v6"
 	"log"
 	"net/http"
+	"time"
 
 	jiraService "github.com/LastSprint/JiraGoIssues/services"
 )
@@ -68,6 +70,8 @@ func main() {
 
 func configureSteveEvents(c config) {
 
+	fmt.Println(time.Now().ISOWeek())
+
 	slackRepo := &crepo.SlackRepo{
 		AuthToken: c.AuthToken,
 	}
@@ -102,6 +106,9 @@ func configureSteveCommands(c config) {
 				ConnectionString: c.MongoDBConnectionString,
 			},
 			SAStatReportsRepo: &Repo.ConfusingMessagesMongoDBRepo{
+				ConnectionString: c.MongoDBConnectionString,
+			},
+			SAReactionsRepo: &Repo.ReactionsMongoDBRepo{
 				ConnectionString: c.MongoDBConnectionString,
 			},
 			PublicSaRequestsChannelId: c.DevOpsAndSAChannelId,

@@ -34,8 +34,8 @@ func (rep *RequestsMongoDBRepo) IncrementRequestCount(channelID string) error {
 
 	filter := bson.M{
 		"channel_id": channelID,
-		"year": year,
-		"week": week,
+		"year":       year,
+		"week":       week,
 	}
 
 	update := bson.M{
@@ -52,7 +52,7 @@ func (rep *RequestsMongoDBRepo) IncrementRequestCount(channelID string) error {
 	return nil
 }
 
-// GetCountOfReportsForThisWeek will return reports count which which was made for current time.Now().ISOWeek() week
+// GetCountForThisWeek will return reports count which which was made for current time.Now().ISOWeek() week
 func (rep *RequestsMongoDBRepo) GetCountForThisWeek(channelID string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -74,8 +74,8 @@ func (rep *RequestsMongoDBRepo) GetCountForThisWeek(channelID string) (int, erro
 
 	filter := bson.M{
 		"channel_id": channelID,
-		"year": year,
-		"week": week,
+		"year":       year,
+		"week":       week,
 	}
 
 	res := collection.FindOne(context.Background(), filter)
@@ -84,7 +84,7 @@ func (rep *RequestsMongoDBRepo) GetCountForThisWeek(channelID string) (int, erro
 		return 0, err
 	}
 
-	var result_val struct{
+	var result_val struct {
 		RequestsCount int `bson:"requests_count"`
 	}
 

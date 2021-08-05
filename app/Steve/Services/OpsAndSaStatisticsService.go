@@ -4,6 +4,7 @@ import (
 	"github.com/LastSprint/feedback_bot/Steve/Models/DTO"
 	"github.com/pkg/errors"
 	"log"
+	"sync"
 )
 
 type SAStatisticRequestRepo interface {
@@ -17,6 +18,10 @@ type SAStatReportsRepo interface {
 	GetCountForThisWeek(channelID string) (map[string]int, error)
 }
 
+type SAReactionsRepo interface {
+	ReadReactions() (map[string]int, error)
+}
+
 // OpsAndSaStatisticsService get statistic about SA work and send it to specific slack channel
 //
 // What kind of statistics:
@@ -25,10 +30,49 @@ type SAStatReportsRepo interface {
 type OpsAndSaStatisticsService struct {
 	SAStatisticRequestRepo
 	SAStatReportsRepo
+	SAReactionsRepo
 	PublicSaRequestsChannelId string
 }
 
 func (srv *OpsAndSaStatisticsService) GatherStatistic() (*DTO.SAWeeklyStat, error) {
+
+	var stat *DTO.SAWeeklyStat
+	var statErr error
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+
+	go func() {
+		stat, statErr = srv.gatherReports()
+		wg.Done()
+	}()
+
+	wg.Add(1)
+
+	var reactions map[string]int
+	var reactionsError error
+
+	go func() {
+		reactions, reactionsError = srv.gatherReactions()
+		wg.Done()
+	}()
+
+	wg.Wait()
+
+	if statErr != nil {
+		return nil, statErr
+	}
+
+	if reactionsError != nil {
+		return nil, reactionsError
+	}
+
+	stat.Reactions = reactions
+
+	return stat, nil
+}
+
+func (srv *OpsAndSaStatisticsService) gatherReports() (*DTO.SAWeeklyStat, error) {
 	requestsCount, err := srv.SAStatisticRequestRepo.GetCountForThisWeek(srv.PublicSaRequestsChannelId)
 	if err != nil {
 		return nil, errors.WithMessage(err, "request count repo")
@@ -57,4 +101,8 @@ func (srv *OpsAndSaStatisticsService) GatherStatistic() (*DTO.SAWeeklyStat, erro
 		RequestsCount:         requestsCount,
 		ReportedRequestsCount: convertedReport,
 	}, nil
+}
+
+func (srv *OpsAndSaStatisticsService) gatherReactions() (map[string]int, error) {
+	return srv.SAReactionsRepo.ReadReactions()
 }
