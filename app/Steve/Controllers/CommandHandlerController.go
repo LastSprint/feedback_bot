@@ -181,10 +181,10 @@ func writeReactionsIfPossible(builder *strings.Builder, stat *DTO.SAWeeklyStat) 
 		return
 	}
 
-	builder.WriteString("\n\nКакие реакции ставили SA:")
+	builder.WriteString("\n\nКакие реакции ставили SA:\n")
 
 	for key, val := range stat.Reactions {
-		str := fmt.Sprintf(":%s::%v\n", key, val)
+		str := fmt.Sprintf(":%s: :%v\n", key, val)
 		builder.WriteString(str)
 	}
 }
