@@ -60,7 +60,7 @@ func (cnt *EventHandlerController) handleChannelPush(w http.ResponseWriter, r *h
 		}
 
 		if err = cnt.Dispatcher.Dispatch(event); err != nil {
-			fmt.Printf("[ERR] An error occurred for event %v\nError: %s", event, err.Error())
+			fmt.Printf("[ERR] An error occurred for event %v Error: %s", event, err.Error())
 		}
 	}()
 }

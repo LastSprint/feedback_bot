@@ -42,7 +42,7 @@ func (srv *ReactionService) Add(model AddReactionServiceModel) error {
 	}
 
 	if err := srv.MsgReactionRepo.AddReactionIfNotAddedPreviously(model.Reaction, model.Channel, model.MessageId); err != nil {
-		return fmt.Errorf("can't write reaction to repo with error\n%w", err)
+		return fmt.Errorf("can't write reaction to repo with error %w", err)
 	}
 
 	return nil
@@ -62,7 +62,7 @@ func (srv *ReactionService) Remove(model AddReactionServiceModel) error {
 	}
 
 	if err := srv.MsgReactionRepo.RemoveReactionIfPossible(model.Reaction, model.Channel, model.MessageId); err != nil {
-		return fmt.Errorf("can't delete reaction from repo with error\n%w", err)
+		return fmt.Errorf("can't delete reaction from repo with error %w", err)
 	}
 
 	return nil
