@@ -23,13 +23,14 @@ type ReactionService struct {
 
 const (
 	saUser         = "U01CKPEPK2Q"
+	superAdminUser = "UFH46AX6W"
 	devOpsReaction = "devops"
 	jarvisReaction = "jarvis"
 )
 
 func (srv *ReactionService) Add(model AddReactionServiceModel) error {
 
-	if model.ReporterUserId != saUser {
+	if model.ReporterUserId != saUser && model.ReporterUserId != superAdminUser {
 		return fmt.Errorf("only SA's reactions counted and other's are skipped")
 	}
 
@@ -48,6 +49,11 @@ func (srv *ReactionService) Add(model AddReactionServiceModel) error {
 }
 
 func (srv *ReactionService) Remove(model AddReactionServiceModel) error {
+
+	if model.ReporterUserId != saUser && model.ReporterUserId != superAdminUser {
+		return fmt.Errorf("only SA's reactions counted and other's are skipped")
+	}
+
 	switch model.Reaction {
 	case devOpsReaction, jarvisReaction:
 		break
