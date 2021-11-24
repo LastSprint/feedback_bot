@@ -1,16 +1,4 @@
 # Surf Automation
-sdfsdfsdf
-----
-----
-BBBBBB
-----
-----
-
----
----
-A DIFF
----
----
 
 It's web service which provides API and should be integrated with Slack.
 
